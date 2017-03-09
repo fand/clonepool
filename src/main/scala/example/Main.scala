@@ -3,7 +3,9 @@ import java.io.File
 import org.eclipse.jgit.api._
 import org.eclipse.jgit.lib._
 import org.eclipse.jgit.api.errors._
+import org.eclipse.jgit.transport.RemoteConfig
 import scala.collection.JavaConversions._
+
 import scala.util.control.Exception._
 
 object Main extends App {
@@ -16,11 +18,34 @@ object Main extends App {
 
   val git = allCatch opt new Git(
     new RepositoryBuilder()
-    .setWorkTree(new File("/Users/amagitakayosi/dev/clonepool"))
+    .setWorkTree(new File("."))
     .build()
   )
   showBranches(git)
-  git.map(g => println(g.remoteList().call()))
+  println(">>>>>>>>>>>")
+
+  val p = for {
+    remoteList <- getRemoteList(git)
+    remote <- remoteList
+    uri <- remote.getURIs()
+    parsed <- splitRemoteURI(uri.toString())
+  } {
+    println(parsed)
+  }
+
+  // getRemoteOrigin(git)
+
+  def getRemoteList(git: Option[Git]): Option[Seq[RemoteConfig]] = git.flatMap(g =>
+    allCatch opt g.remoteList().call()
+  )
+
+  // def getRemoteOrigin(git: Option[Git]) = {
+  //   var remoteList = for {
+  //     remoteList <- getRemoteList(git)
+  //     remote <- remoteList
+  //   } yield remote
+  //   println(remoteList)
+  // }
 
   // var git = getGitInstance("fand/evil")
   // showBranches(git)
@@ -32,6 +57,14 @@ object Main extends App {
     } {
       val s = b.getName().replaceAll("refs/(heads|remotes)/", "")
       println(s)
+    }
+  }
+
+  def splitRemoteURI(uri: Uri) = allCatch opt {
+    val re = "^(?:git@)?(.*):(.*)\\.git$".r
+    uri match {
+      case re(site, reponame) => (site, reponame)
+      case _ => throw new Exception("failed to parse remote URI")
     }
   }
 
