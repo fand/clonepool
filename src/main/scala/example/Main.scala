@@ -22,33 +22,32 @@ object Main extends App {
     .build()
   )
   showBranches(git)
-  println(">>>>>>>>>>>")
+  println(getRemoteOrigin(git))
 
-  val p = for {
-    remoteList <- getRemoteList(git)
-    remote <- remoteList
-    uri <- remote.getURIs()
-    parsed <- splitRemoteURI(uri.toString())
-  } {
-    println(parsed)
-  }
-
-  // getRemoteOrigin(git)
+  // var git = getGitInstance("fand/evil")
+  // showBranches(git)
 
   def getRemoteList(git: Option[Git]): Option[Seq[RemoteConfig]] = git.flatMap(g =>
     allCatch opt g.remoteList().call()
   )
 
-  // def getRemoteOrigin(git: Option[Git]) = {
-  //   var remoteList = for {
-  //     remoteList <- getRemoteList(git)
-  //     remote <- remoteList
-  //   } yield remote
-  //   println(remoteList)
-  // }
+  def getRemoteOrigin(git: Option[Git]) = {
+    val remoteOrigins: Seq[RemoteConfig] = getRemoteList(git).map(_.filter(_.getName().matches(".*origin.*"))).getOrElse(Nil)
+    val uris: Seq[String] = for {
+      remoteOrigin <- remoteOrigins
+      uri <- remoteOrigin.getURIs().map(_.toString())
+    } yield uri
 
-  // var git = getGitInstance("fand/evil")
-  // showBranches(git)
+    uris.flatMap(u => splitRemoteURI(u)).headOption
+  }
+
+  def splitRemoteURI(uri: Uri) = allCatch opt {
+    val re = "^(?:git@)?(.*):(.*)\\.git$".r
+    uri match {
+      case re(site, reponame) => (site, reponame)
+      case _ => throw new Exception("failed to parse remote URI")
+    }
+  }
 
   def showBranches(git: Option[Git]) = {
     for {
@@ -57,14 +56,6 @@ object Main extends App {
     } {
       val s = b.getName().replaceAll("refs/(heads|remotes)/", "")
       println(s)
-    }
-  }
-
-  def splitRemoteURI(uri: Uri) = allCatch opt {
-    val re = "^(?:git@)?(.*):(.*)\\.git$".r
-    uri match {
-      case re(site, reponame) => (site, reponame)
-      case _ => throw new Exception("failed to parse remote URI")
     }
   }
 
