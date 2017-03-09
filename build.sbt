@@ -8,7 +8,10 @@ lazy val root = (project in file(".")).
       version      := "0.1.0-SNAPSHOT"
     )),
     name := "Clonepool",
-    libraryDependencies += scalaTest % Test
+    libraryDependencies ++= Seq(
+      scalaTest % Test,
+      "org.eclipse.jgit" % "org.eclipse.jgit" % "4.6.1.201703071140-r"
+    )
   )
 
 publishTo := Some(Resolver.file("clonepool",  new File( "./docs/clonepool" )) )
