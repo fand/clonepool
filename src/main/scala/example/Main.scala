@@ -14,12 +14,18 @@ object Main extends App {
   type Repo = String
   type Uri = String
 
-  showBranches("fand/evil")
+  val git = allCatch opt new Git(
+    new RepositoryBuilder()
+    .setWorkTree(new File("/Users/amagitakayosi/dev/clonepool"))
+    .build()
+  )
+  showBranches(git)
+  git.map(g => println(g.remoteList().call()))
 
-  def showBranches(repo: Repo) = {
-    var git = getGitInstance(repo)
+  // var git = getGitInstance("fand/evil")
+  // showBranches(git)
 
-    // ブランチ名の一覧取得(Ref の getName()で「refs/remotes/origin/master」のように取得できる)
+  def showBranches(git: Option[Git]) = {
     for {
       branches <- getBranches(git)
       b <- branches
