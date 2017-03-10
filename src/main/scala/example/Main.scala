@@ -8,7 +8,8 @@ object Main extends App {
 
   val repo = Repo.fromDir(".")
   // val repo = Repo.fromName("fand")
-  println(repo)
+  println(repo.branches)
+  println(repo.currentBranch)
 
   // git.showBranches()
   // println(git.remoteOrigin)

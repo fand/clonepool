@@ -1,17 +1,15 @@
 package io.github.fand.clonepool.lib
-import scala.util.control.Exception._
+import scala.reflect.ClassTag
 import scala.sys.process.Process
+import scala.util.control.Exception._
 import java.io.File
-
-import scala.sys.process.{Process, ProcessLogger}
 import java.io.ByteArrayInputStream
+import io.github.fand.clonepool.util._
 
 object Repo {
   private def exec(command: String, dir: String) = allCatch opt Process(command, new File(dir)).lineStream.toList
 
   def fromDir(dir: String): Repo = {
-    // 親ディレクトリを遡って .git ディレクトリのあるディレクトリを探す
-    // .git/config からoriginを取得する
     val root: String = exec("git rev-parse --show-toplevel", dir) match {
       case Some(x :: Nil) => x
       case _ => throw new Exception(s"Invalid directory: $dir")
@@ -59,10 +57,20 @@ object Repo {
 
 case class Repo(root: String, origin: String) {
 
+  private def exec(command: String, error: String) =
+    Repo.exec(command, root).getOrThrow(new Exception(error))
+
   def branches: List[String] =
-    Repo.exec("git branch", root).getOrElse(Nil)
+    exec("git branch", s"git branch died. Is the repository broken?: $root")
       .map(_.replaceFirst("^\\* ", ""))
       .map(_.trim)
+
+  def currentBranch: String =
+    exec("git branch", s"git branch died. Is the repository broken?: $root")
+      .filter(_.matches("^\\* .*"))
+      .headOption
+      .getOrThrow(new Exception("No main branch found"))
+      .replaceFirst("^\\* ", "")
 
   // val CLONES_PER_REPO = 4
   // val CLONEPOOL_ROOT = System.getProperty("user.home") + s"/.clonepool/"
@@ -79,10 +87,6 @@ case class Repo(root: String, origin: String) {
   //
   // def canCloneMore: Boolean = {
   //   new File(cloneDst).list.size < CLONES_PER_REPO
-  // }
-  //
-  // def originUri: Uri = {
-  //   s"git@github.com:$repo.git"
   // }
   //
   // def poolPath: String =
