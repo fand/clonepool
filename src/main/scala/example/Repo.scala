@@ -3,6 +3,9 @@ import scala.util.control.Exception._
 import scala.sys.process.Process
 import java.io.File
 
+import scala.sys.process.{Process, ProcessLogger}
+import java.io.ByteArrayInputStream
+
 object Repo {
   private def exec(command: String, dir: String) = allCatch opt Process(command, new File(dir)).lineStream.toList
 
@@ -22,9 +25,35 @@ object Repo {
     new Repo(root, origin)
   }
 
-  // def fromName(name: String): Repo = {
-  //   exec("ghq list", ".").getOrElse(Nil).filter()
-  // }
+  def fromName(name: String): Repo = {
+    val repoCandidates = exec("ghq list", ".").getOrElse(Nil)
+      .filter(_.matches(s".*$name.*"))
+
+    if (repoCandidates.size > 0) {
+      val repoPath = peco(repoCandidates)
+      val ghqRootOption = exec("ghq root", ".").getOrElse(Nil).headOption
+      ghqRootOption match {
+        case None => throw new Exception("ghq root is broken")
+        case Some(ghqRoot) => fromDir(s"$ghqRoot/$repoPath")
+      }
+    }
+    else {
+      exec(s"ghq get $name", ".") match {
+        case None => throw new Exception("ghq get failed")
+        case _ => println(s"ghq get $name succeeded")
+      }
+      val ghqRootOption = exec("ghq root", ".").getOrElse(Nil).headOption
+      ghqRootOption match {
+        case None => throw new Exception("ghq root is broken")
+        case Some(ghqRoot) => fromDir(s"$ghqRoot/$name")
+      }
+    }
+  }
+
+  def peco(list: List[String]): String = {
+    val input = new ByteArrayInputStream(list.mkString("\n").getBytes("UTF-8"))
+    ((Process("cat") #< input) #| Process("peco")).lineStream.toList(0)
+  }
 
 }
 
