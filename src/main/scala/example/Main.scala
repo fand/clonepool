@@ -1,10 +1,18 @@
 package io.github.fand.clonepool
 import io.github.fand.clonepool.lib._
+import io.github.fand.clonepool.cli._
 import scala.util.control.Exception._
 import scala.sys.process.{Process, ProcessLogger}
 
 object Main extends App {
   initialize()
+
+  // Parse CLI
+  val config = CLI.initScopt(args)
+  config.mode match {
+    case "checkout" => println(s"checkout to ${config.branch}")
+    case "list" => println("list")
+  }
 
   val repo = Repo.fromDir(".")
   // val repo = Repo.fromName("fand")
@@ -25,4 +33,5 @@ object Main extends App {
       throw new Exception("peco not found")
     }
   }
+
 }
