@@ -8,11 +8,11 @@ object Main extends App {
   initialize()
 
   // Parse CLI
-  val config = CLI.initScopt(args)
-  config.mode match {
-    case "checkout" => println(s"checkout to ${config.branch}")
-    case "list" => println("list")
-  }
+  val config = CLI.init(args)
+  // config.mode match {
+  //   case "checkout" => println(s"checkout to ${config.branch}")
+  //   case "list" => println("list")
+  // }
 
   val repo = Repo.fromDir(".")
   // val repo = Repo.fromName("fand")

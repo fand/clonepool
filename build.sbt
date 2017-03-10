@@ -10,7 +10,8 @@ lazy val root = (project in file(".")).
     name := "Clonepool",
     libraryDependencies ++= Seq(
       scalaTest % Test,
-      "com.github.scopt" %% "scopt" % "3.5.0"
+      "org.backuity.clist" %% "clist-core"   % "3.2.2",
+      "org.backuity.clist" %% "clist-macros" % "3.2.2" % "provided"
     )
   )
 

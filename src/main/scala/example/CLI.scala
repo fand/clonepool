@@ -1,32 +1,22 @@
 package io.github.fand.clonepool.cli
 import io.github.fand.clonepool.util._
+import org.backuity.clist.{Cli, Command, opt, arg, args}
 
-case class CLIConfig(
-  mode: String = "checkout",
-  branch: String = ""
-)
+sealed trait Common { this: Command => // same as above
+}
+
+object Go extends Command(description = "Go to branch. Clone if needed") with Common {
+  var target = arg[String]("The name of branch or repository")
+}
+
+object List extends Command(description = "checkout to branch") with Common
 
 object CLI {
-  def initScopt(args: Seq[String]): CLIConfig = {
-    val parser = new scopt.OptionParser[CLIConfig]("clonepool") {
-      head("clonepool", "0.0.0")
-      help("help").text("prints this usage text")
-
-      cmd("checkout")
-        .action((_, c) => c.copy(mode = "checkout"))
-        .text("checkout")
-        .children(
-          arg[String]("<branch>")
-            .optional()
-            .action((x, c) => c.copy(branch = x))
-            .text("checkout to a branch. clone it if needed")
-        )
-
-      cmd("list")
-        .action((_, c) => c.copy(mode = "list"))
-        .text("list available clones")
+  def init(args: Array[String]) = {
+    Cli.parse(args).withProgramName("clonepool").withCommands(Go, List) match {
+      case Some(Go) => println(Go.target)
+      case Some(List) => println("gonna list")
+      case None => println("Strange args")
     }
-
-    parser.parse(args, CLIConfig()).getOrThrow(new Exception("Invalid arguments"))
   }
 }
