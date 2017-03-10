@@ -4,20 +4,32 @@ import io.github.fand.clonepool.cli._
 import scala.util.control.Exception._
 import scala.sys.process.{Process, ProcessLogger}
 
-object Main extends App {
-  initialize()
+object Main {
 
-  // Parse CLI
-  val config = CLI.init(args)
-  // config.mode match {
-  //   case "checkout" => println(s"checkout to ${config.branch}")
-  //   case "list" => println("list")
-  // }
+  def main(args: Array[String]) = {
+    initialize()
+    CLI.init(args) match {
+      case HelpMode => CLI.help()
+      case VersionMode => CLI.version()
+      case ListMode => list()
+      case CheckoutMode(keywords) => { checkout(keywords) }
+    }
+  }
 
-  val repo = Repo.fromDir(".")
-  // val repo = Repo.fromName("fand")
-  println(repo.branches)
-  println(repo.currentBranch)
+  def list() = {
+    val repo = Repo.fromDir(".")
+    println(repo.branches)
+  }
+
+  def checkout(keywords: Seq[String]) = {
+    println("gonna checkout")
+    println(keywords)
+  }
+
+  // val repo = Repo.fromDir(".")
+  // // val repo = Repo.fromName("fand")
+  // println(repo.branches)
+  // println(repo.currentBranch)
 
   // git.showBranches()
   // println(git.remoteOrigin)

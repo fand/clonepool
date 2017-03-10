@@ -1,22 +1,53 @@
 package io.github.fand.clonepool.cli
 import io.github.fand.clonepool.util._
-import org.backuity.clist.{Cli, Command, opt, arg, args}
+import org.backuity.ansi.AnsiFormatter.FormattedHelper
 
-sealed trait Common { this: Command => // same as above
-}
-
-object Go extends Command(description = "Go to branch. Clone if needed") with Common {
-  var target = arg[String]("The name of branch or repository")
-}
-
-object List extends Command(description = "checkout to branch") with Common
+sealed trait Mode
+case class HelpMode() extends Mode
+case class VersionMode() extends Mode
+case class ListMode() extends Mode
+case class CheckoutMode(keywords: Seq[String]) extends Mode
 
 object CLI {
+
   def init(args: Array[String]) = {
-    Cli.parse(args).withProgramName("clonepool").withCommands(Go, List) match {
-      case Some(Go) => println(Go.target)
-      case Some(List) => println("gonna list")
-      case None => println("Strange args")
+    if (args.exists(_.matches("(--help|-h)"))) {
+      HelpMode
+    }
+    else if (args.exists(_.matches("(--version|-v)"))) {
+      VersionMode
+    }
+    else if (args.exists(_.matches("(--list|-l)"))) {
+      ListMode
+    }
+    else {
+      CheckoutMode(args.take(2))
     }
   }
+
+  def help() = println(List(
+    ansi"  ",
+    ansi"  %bold{clonepool} - Git clone and branch manager",
+    ansi"  ",
+    ansi"  %underline{Usage}",
+    ansi"  ",
+    ansi"    $$ clonepool [options] <keyword>",
+    ansi"  ",
+    ansi"  %underline{Options}",
+    ansi"  ",
+    ansi"    %yellow{--list, -l}                     List all available",
+    ansi"    %yellow{--help, -h}                     Show this help",
+    ansi"    %yellow{--version, -v}                  Show the version of clonepool",
+    ansi"  ",
+    ansi"  %underline{Examples}",
+    ansi"  ",
+    ansi"    %cyan{$$ clonepool}",
+    ansi"    %cyan{$$ clonepool my-branch}          Checkout to %bold{my-branch} of the branch of current directory",
+    ansi"    %cyan{$$ clonepool my-repo}            Clone %bold{my-repo} and checkout to the default branch",
+    ansi"    %cyan{$$ clonepool my-repo my-branch}  Clone %bold{my-repo} and checkout to %bold{my-branch}",
+    ansi"  "
+  ).mkString("\n"))
+
+  def version() = println("clonepool ver 0.0.0")
+
 }
