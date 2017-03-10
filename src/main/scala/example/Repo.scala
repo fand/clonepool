@@ -22,6 +22,10 @@ object Repo {
     new Repo(root, origin)
   }
 
+  // def fromName(name: String): Repo = {
+  //   exec("ghq list", ".").getOrElse(Nil).filter()
+  // }
+
 }
 
 case class Repo(root: String, origin: String) {
