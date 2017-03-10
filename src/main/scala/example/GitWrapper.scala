@@ -8,28 +8,78 @@ import org.eclipse.jgit.transport.RemoteConfig
 
 object GitWrapper {
 
-  def fromDir(dir: String) = new GitWrapper(getGitForDir(dir))
-  // def fromRepo(repo: Repo) = new GitWrapper(getGitForDir(dir))
+  import org.eclipse.jgit.api.TransportConfigCallback
+  import org.eclipse.jgit.transport._
 
-  def getGitClone(repo: Repo) =
+  val cb = new TransportConfigCallback {
+    override def configure(transport: Transport): Unit = {
+      val sshSessionFactory = new CustomConfigSessionFactory;
+      val sshTransport = transport.asInstanceOf[SshTransport];
+      sshTransport.setSshSessionFactory(sshSessionFactory);
+    }
+  }
+
+  def fromDir(dir: String) = new GitWrapper(getGitForDir(dir))
+  def fromRepoName(name: String) = {
+    val repo = new Repo(name)
+    new GitWrapper(getGitForRepo(repo))
+  }
+
+  private def getGitForRepo(repo: Repo) = {
+    if (repo.shouldClone) {
+      getGitClone(repo)
+    }
+    else {
+      getGitExisting(repo)
+    }
+  }
+
+  private def getGitClone(repo: Repo) =
     new CloneCommand()
       .setDirectory(new File(repo.cloneDst))
       .setURI(repo.originUri)
+      .setTransportConfigCallback(cb)
       .call()
 
-  def getGitExisting(repo: Repo) =
+  private def getGitExisting(repo: Repo) =
     new Git(
       new RepositoryBuilder()
         .setWorkTree(new File(repo.cloneDst))
         .build()
     )
 
-  def getGitForDir(dir: String) = new Git(
+  private def getGitForDir(dir: String) = new Git(
     new RepositoryBuilder()
     .setWorkTree(new File(dir))
     .build()
   )
 
+}
+
+import org.eclipse.jgit.transport.JschConfigSessionFactory
+import org.eclipse.jgit.transport.SshSessionFactory
+import org.eclipse.jgit.util.FS
+import com.jcraft.jsch.JSch
+import com.jcraft.jsch.Session
+import org.eclipse.jgit.transport.OpenSshConfig.Host
+
+class CustomConfigSessionFactory extends JschConfigSessionFactory {
+  override protected def getJSch(hc: Host, fs: FS): JSch = {
+    val jsch = super.getJSch(hc, fs)
+    jsch.removeAllIdentity()
+    jsch.addIdentity("/Users/amagitakayosi/.ssh/id_rsa")
+    jsch
+  }
+
+  override protected def configure(host: Host, session: Session): Unit = {
+    // do nothing
+  }
+
+  // override protected def createDefaultJSch(fs: FS): JSch = {
+  //   val jsch = super.createDefaultJSch(fs)
+  //   jsch.addIdentity("/Users/amagitakayosi/.ssh/id_rsa")
+  //   jsch
+  // }
 }
 
 class GitWrapper(private val git: Git) {
@@ -59,9 +109,11 @@ class GitWrapper(private val git: Git) {
 
   private def splitRemoteURI(uri: String) = {
     println(uri)
-    val re = "^(?:git@)?(.*):(.*)\\.git$".r
+    val ssh = "^(?:git@)?(.*):(.*)\\.git$".r
+    val https = "^https\\://(.*?)/(.*)$".r
     uri match {
-      case re(site, reponame) => (site, reponame)
+      case ssh(site, reponame) => (site, reponame)
+      case https(site, reponame) => (site, reponame)
       case _ => throw new Exception("failed to parse remote URI")
     }
   }

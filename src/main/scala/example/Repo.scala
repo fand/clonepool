@@ -9,15 +9,6 @@ class Repo(private val repo: String) {
   type Repo = String
   type Uri = String
 
-  // def getGitInstance: Option[Git] = {
-  //   if (shouldClone(repo)) {
-  //     getGitClone(repo)
-  //   }
-  //   else {
-  //     getGitExisting(repo)
-  //   }
-  // }
-
   def shouldClone: Boolean =
     !doesPoolExist || canCloneMore
 
@@ -30,7 +21,7 @@ class Repo(private val repo: String) {
   }
 
   def originUri: Uri = {
-    s"https://github.com/$repo"
+    s"git@github.com:$repo.git"
   }
 
   def cloneDst: String = {
