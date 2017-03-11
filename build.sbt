@@ -10,8 +10,7 @@ lazy val root = (project in file(".")).
     name := "Clonepool",
     libraryDependencies ++= Seq(
       scalaTest % Test,
-      "org.eclipse.jgit" % "org.eclipse.jgit" % "4.6.1.201703071140-r",
-      "org.slf4j" % "slf4j-nop" % "1.7.24"
+      "org.backuity" %% "ansi-interpolator" % "1.1.0"
     )
   )
 
