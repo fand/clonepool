@@ -57,6 +57,15 @@ object Repo {
 
 case class Repo(root: String, origin: String) {
 
+  private val sshPattern = "git@(.*)\\:(.*)/(.*)\\.git".r
+  private val httpsPattern = "https://(.*)/(.*)/(.*)".r
+
+  val (site, user, project) = origin match {
+    case sshPattern(site, user, project) => (site, user, project)
+    case httpsPattern(site, user, project) => (site, user, project)
+    case _ => new Exception(s"Invalid origin: $origin")
+  }
+
   private def exec(command: String, error: String) =
     Repo.exec(command, root).getOrThrow(new Exception(error))
 
@@ -71,31 +80,5 @@ case class Repo(root: String, origin: String) {
       .headOption
       .getOrThrow(new Exception("No main branch found"))
       .replaceFirst("^\\* ", "")
-
-  // val CLONES_PER_REPO = 4
-  // val CLONEPOOL_ROOT = System.getProperty("user.home") + s"/.clonepool/"
-  //
-  // type Repo = String
-  // type Uri = String
-  //
-  // def shouldClone: Boolean =
-  //   !doesPoolExist || canCloneMore
-  //
-  // def doesPoolExist: Boolean = {
-  //   new File(cloneDst).exists
-  // }
-  //
-  // def canCloneMore: Boolean = {
-  //   new File(cloneDst).list.size < CLONES_PER_REPO
-  // }
-  //
-  // def poolPath: String =
-  //   s"$CLONEPOOL_ROOT/$site/$repo/"
-  //
-  // def clonePath: String =
-  //   s"$poolPath/$nextIndex"
-  //
-  // def nextIndex: Int =
-  //   new File(cloneDst).list.size + 1
 
 }

@@ -12,7 +12,8 @@ object Main {
       case HelpMode => CLI.help()
       case VersionMode => CLI.version()
       case ListMode => list()
-      case CheckoutMode(keywords) => { checkout(keywords) }
+      case CheckoutMode(Nil) => CLI.help()
+      case CheckoutMode(keywords) => checkout(keywords)
     }
   }
 
@@ -22,8 +23,13 @@ object Main {
   }
 
   def checkout(keywords: Seq[String]) = {
+    val repo = Repo.fromDir(".")
+    val pool = Pool(repo)
     println("gonna checkout")
-    println(keywords)
+    println(pool)
+    println(pool.cloneDst)
+    println(pool.shouldClone)
+    println(pool.doesPoolExist)
   }
 
   // val repo = Repo.fromDir(".")
