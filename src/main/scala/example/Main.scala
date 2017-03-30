@@ -17,10 +17,8 @@ object Main {
     }
   }
 
-  def list() = {
-    val repo = Repo.fromDir(".")
-    println(repo.branches)
-  }
+  def list() =
+    Pool.clones.foreach(println)
 
   def checkout(keywords: Seq[String]) = {
     val isInRepo = Repo.isDirInRepo(".")
@@ -39,29 +37,28 @@ object Main {
 
   def checkoutRepoBranch(reponame: String, branch: String) = {
     val repo = Repo.fromName(reponame)
-    val pool = Pool(repo)
+    val pool = Pool(repo.path)
     println(s"checkoutRepoBranch:\n  $repo\n  $pool\n  $branch")
   }
 
   def checkoutBranch(branch: String) = {
     val repo = Repo.fromDir(".")
-    val pool = Pool(repo)
+    val pool = Pool(repo.path)
 
     if (!pool.doesPoolExist) {
       pool.createPool()
     }
 
     if (!pool.hasClone(branch)) {
-      val newRepo = pool.createClone(branch)
+      pool.createClone(repo.root, branch)
     }
 
-    println(s"${pool.cloneDst}/$branch");
+    println(s"${pool.path}/$branch");
   }
 
   def checkoutRepo(reponame: String) = {
     val repo = Repo.fromName(reponame)
-    val pool = Pool(repo)
-    println(s"checkoutRepo:\n  $repo\n  $pool")
+    val pool = Pool(repo.path)
   }
 
   private def exitcode(cmd: String): Int =

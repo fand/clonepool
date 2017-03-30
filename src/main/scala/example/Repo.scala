@@ -82,4 +82,5 @@ case class Repo(root: String, origin: String) {
       .getOrThrow(new Exception("No main branch found"))
       .replaceFirst("^\\* ", "")
 
+  def path = s"$site/$user/$project"
 }
