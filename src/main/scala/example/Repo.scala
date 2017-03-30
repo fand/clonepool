@@ -9,6 +9,8 @@ import io.github.fand.clonepool.util._
 object Repo {
   private def exec(command: String, dir: String) = allCatch opt Process(command, new File(dir)).lineStream.toList
 
+  def isDirInRepo(dir: String) = exec("git rev-parse --show-toplevel", dir).isDefined
+
   def fromDir(dir: String): Repo = {
     val root: String = exec("git rev-parse --show-toplevel", dir) match {
       case Some(x :: Nil) => x

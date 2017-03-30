@@ -23,14 +23,42 @@ object Main {
   }
 
   def checkout(keywords: Seq[String]) = {
+    val isInRepo = Repo.isDirInRepo(".")
+
+    keywords match {
+      case reponame +: branch +: Nil => checkoutRepoBranch(reponame, branch)
+      case keyword +: Nil => if (isInRepo) {
+        checkoutBranch(keyword)
+      }
+      else {
+        checkoutRepo(keyword)
+      }
+      case _ => throw new Exception("Invalid keywords")
+    }
+  }
+
+  def checkoutRepoBranch(reponame: String, branch: String) = {
+    val repo = Repo.fromName(reponame)
+    val pool = Pool(repo)
+    println(s"checkoutRepoBranch:\n  $repo\n  $pool\n  $branch")
+  }
+
+  def checkoutBranch(branch: String) = {
     val repo = Repo.fromDir(".")
     val pool = Pool(repo)
-    println("gonna checkout")
-    println(pool)
-    println(pool.cloneDst)
-    println(pool.shouldClone)
-    println(pool.doesPoolExist)
+    println(s"checkoutBranch:\n  $repo\n  $pool\n  $branch")
   }
+
+  def checkoutRepo(reponame: String) = {
+    val repo = Repo.fromName(reponame)
+    val pool = Pool(repo)
+    println(s"checkoutRepo:\n  $repo\n  $pool")
+  }
+
+  // val repo = Repo.fromDir(".")
+  //
+  // val pool = Pool(repo)
+  // println("gonna checkout")
 
   // val repo = Repo.fromDir(".")
   // // val repo = Repo.fromName("fand")
