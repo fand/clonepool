@@ -51,15 +51,11 @@ object Main {
       pool.createPool()
     }
 
-    if (pool.hasClone(branch)) {
-      println(s">> Already cloned: $branch")
-    }
-    else {
+    if (!pool.hasClone(branch)) {
       val newRepo = pool.createClone(branch)
-      println(s">> Created new clone: ${repo.user}/${repo.project}:$branch")
     }
 
-    println(s"checkoutBranch:\n  $repo\n  $pool\n  $branch")
+    println(s"${pool.cloneDst}/$branch");
   }
 
   def checkoutRepo(reponame: String) = {
