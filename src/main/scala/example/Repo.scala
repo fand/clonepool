@@ -26,27 +26,26 @@ object Repo {
   }
 
   def fromName(name: String): Repo = {
-    val repoCandidates = exec("ghq list", ".").getOrElse(Nil)
+    var repoCandidates = exec("ghq list", ".").getOrElse(Nil)
       .filter(_.matches(s".*$name.*"))
 
-    if (repoCandidates.size > 0) {
-      val repoPath = peco(repoCandidates)
-      val ghqRootOption = exec("ghq root", ".").getOrElse(Nil).headOption
-      ghqRootOption match {
-        case None => throw new Exception("ghq root is broken")
-        case Some(ghqRoot) => fromDir(s"$ghqRoot/$repoPath")
-      }
-    }
-    else {
+    if (repoCandidates.size == 0) {
       exec(s"ghq get $name", ".") match {
         case None => throw new Exception("ghq get failed")
         case _ => println(s"ghq get $name succeeded")
       }
-      val ghqRootOption = exec("ghq root", ".").getOrElse(Nil).headOption
-      ghqRootOption match {
-        case None => throw new Exception("ghq root is broken")
-        case Some(ghqRoot) => fromDir(s"$ghqRoot/$name")
-      }
+      repoCandidates = exec("ghq list", ".").getOrElse(Nil)
+        .filter(_.matches(s".*$name.*"))
+    }
+
+    val repoPath = repoCandidates.size match {
+      case 1 => repoCandidates(0)
+      case _ => peco(repoCandidates)
+    }
+    val ghqRootOption = exec("ghq root", ".").getOrElse(Nil).headOption
+    ghqRootOption match {
+      case None => throw new Exception("ghq root is broken")
+      case Some(ghqRoot) => fromDir(s"$ghqRoot/$repoPath")
     }
   }
 
