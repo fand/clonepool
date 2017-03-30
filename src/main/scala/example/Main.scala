@@ -64,19 +64,6 @@ object Main {
     println(s"checkoutRepo:\n  $repo\n  $pool")
   }
 
-  // val repo = Repo.fromDir(".")
-  //
-  // val pool = Pool(repo)
-  // println("gonna checkout")
-
-  // val repo = Repo.fromDir(".")
-  // // val repo = Repo.fromName("fand")
-  // println(repo.branches)
-  // println(repo.currentBranch)
-
-  // git.showBranches()
-  // println(git.remoteOrigin)
-
   private def exitcode(cmd: String): Int =
     Process(cmd) ! ProcessLogger(str => ())
 

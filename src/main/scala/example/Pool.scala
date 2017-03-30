@@ -15,30 +15,23 @@ case class Pool(repo: Repo) {
   def shouldClone: Boolean =
     !doesPoolExist || canCloneMore
 
-  def doesPoolExist: Boolean = {
+  def doesPoolExist: Boolean =
     new File(cloneDst).exists
-  }
 
-  def hasClone(branch: String): Boolean = {
+  def hasClone(branch: String): Boolean =
     new File(s"$cloneDst/$branch").exists
-  }
 
-  def canCloneMore: Boolean = {
+  def canCloneMore: Boolean =
     new File(cloneDst).list.size < CLONES_PER_REPO
-  }
 
   def nextIndex: Int =
     new File(cloneDst).list.size + 1
 
-  // def clones: List[String] = new File(cloneDst).list.toList
-  def clones: List[String] = {
-    println(cloneDst)
+  def clones: List[String] =
     new File(cloneDst).list.toList
-  }
 
-  def createPool(): Unit = {
+  def createPool(): Unit =
     new File(cloneDst).mkdirs()
-  }
 
   def createClone(branch: String): Repo = {
     val newRoot = s"$cloneDst/$branch"
