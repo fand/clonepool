@@ -46,6 +46,19 @@ object Main {
   def checkoutBranch(branch: String) = {
     val repo = Repo.fromDir(".")
     val pool = Pool(repo)
+
+    if (!pool.doesPoolExist) {
+      pool.createPool()
+    }
+
+    if (pool.hasClone(branch)) {
+      println(s">> Already cloned: $branch")
+    }
+    else {
+      val newRepo = pool.createClone(branch)
+      println(s">> Created new clone: ${repo.user}/${repo.project}:$branch")
+    }
+
     println(s"checkoutBranch:\n  $repo\n  $pool\n  $branch")
   }
 
