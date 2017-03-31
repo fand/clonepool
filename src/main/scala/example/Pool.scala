@@ -47,6 +47,17 @@ case class Pool(repopath: String) {
 
   def createClone(src: String, branch: String): Unit = {
     exec(s"cp -r ${src} $path/$branch", ".")
+    val repo = Repo.fromDir(s"$path/$branch")
+
+    exec(s"git reset --hard", s"$path/$branch")
+    exec(s"git checkout .", s"$path/$branch")
+
+    if (repo.branches.contains(branch)) {
+      exec(s"git checkout $branch", s"$path/$branch")
+    }
+    else {
+      exec(s"git checkout -b $branch", s"$path/$branch")
+    }
   }
 
 }
