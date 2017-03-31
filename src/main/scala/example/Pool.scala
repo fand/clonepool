@@ -5,19 +5,17 @@ import java.io.File
 object Pool {
   private val CLONEPOOL_ROOT = System.getProperty("user.home") + s"/.clonepool"
 
+  def fromRepo(repo: Repo) = Pool(s"$CLONEPOOL_ROOT/${repo.path}")
+
   def clones = {
-    val sites = new File(CLONEPOOL_ROOT).list.toList
-    val users = sites.flatMap(s => new File(s"$CLONEPOOL_ROOT/$s").list.toList.map(u => s"$s/$u"))
-    val pools = users.flatMap(u => new File(s"$CLONEPOOL_ROOT/$u").list.toList.map(p => s"$u/$p"))
+    val sites = new File(CLONEPOOL_ROOT).list.toList.map(s => s"$CLONEPOOL_ROOT/$s")
+    val users = sites.flatMap(s => new File(s).list.toList.map(u => s"$s/$u"))
+    val pools = users.flatMap(u => new File(u).list.toList.map(p => s"$u/$p"))
     pools.flatMap(p => Pool(p).clones.map(c => s"$p/$c"))
   }
 }
 
-case class Pool(repopath: String) {
-  private val CLONEPOOL_ROOT = System.getProperty("user.home") + s"/.clonepool"
-
-  val path = s"$CLONEPOOL_ROOT/$repopath"
-
+case class Pool private (path: String) {
   def doesPoolExist: Boolean =
     new File(path).exists
 

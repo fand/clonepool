@@ -5,10 +5,10 @@ import io.github.fand.clonepool.util._
 object Repo {
   def isDirInRepo(dir: String) = exec("git rev-parse --show-toplevel", dir).isDefined
 
-  def fromDir(dir: String): Repo = {
+  def fromDir(dir: String) = {
     val root = execT("git rev-parse --show-toplevel", dir, s"Invalid directory: $dir")(0)
     val origin = execT("git remote get-url origin", root, "Invalid remote origin found")(0)
-    new Repo(root, origin)
+    Repo(root, origin)
   }
 
   def fromName(name: String): Repo = {
@@ -34,17 +34,19 @@ object Repo {
       case Some(ghqRoot) => fromDir(s"$ghqRoot/$repoPath")
     }
   }
+
+  val sshPattern = "git@(.*)\\:(.*)/(.*)\\.git".r
+  val httpsPattern = "https://(.*)/(.*)/(.*)".r
 }
 
-case class Repo(root: String, origin: String) {
-  private val sshPattern = "git@(.*)\\:(.*)/(.*)\\.git".r
-  private val httpsPattern = "https://(.*)/(.*)/(.*)".r
-
+case class Repo private (root: String, origin: String) {
   val (site, user, project) = origin match {
-    case sshPattern(site, user, project) => (site, user, project)
-    case httpsPattern(site, user, project) => (site, user, project)
+    case Repo.sshPattern(site, user, project) => (site, user, project)
+    case Repo.httpsPattern(site, user, project) => (site, user, project)
     case _ => new Exception(s"Invalid origin: $origin")
   }
+
+  def path = s"$site/$user/$project"
 
   def branches: List[String] =
     execT("git branch", root, s"git branch died. Is the repository broken?: $root")
@@ -57,6 +59,4 @@ case class Repo(root: String, origin: String) {
       .headOption
       .getOrThrow(new Exception("No main branch found"))
       .replaceFirst("^\\* ", "")
-
-  def path = s"$site/$user/$project"
 }

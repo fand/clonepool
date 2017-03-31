@@ -47,19 +47,19 @@ object Main {
 
   def checkoutRepoBranch(reponame: String, branch: String) = {
     val repo = Repo.fromName(reponame)
-    val pool = Pool(repo.path)
+    val pool = Pool.fromRepo(repo)
     (repo, pool, branch)
   }
 
   def checkoutBranch(branch: String) = {
     val repo = Repo.fromDir(".")
-    val pool = Pool(repo.path)
+    val pool = Pool.fromRepo(repo)
     (repo, pool, branch)
   }
 
   def checkoutRepo(reponame: String) = {
     val repo = Repo.fromName(reponame)
-    val pool = Pool(repo.path)
+    val pool = Pool.fromRepo(repo)
     (repo, pool, repo.currentBranch)
   }
 
