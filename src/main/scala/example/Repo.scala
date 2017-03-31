@@ -1,27 +1,13 @@
 package io.github.fand.clonepool.lib
 import scala.reflect.ClassTag
-import scala.sys.process.Process
-import scala.util.control.Exception._
-import java.io.File
-import java.io.ByteArrayInputStream
 import io.github.fand.clonepool.util._
 
 object Repo {
-  private def exec(command: String, dir: String) = allCatch opt Process(command, new File(dir)).lineStream.toList
-
   def isDirInRepo(dir: String) = exec("git rev-parse --show-toplevel", dir).isDefined
 
   def fromDir(dir: String): Repo = {
-    val root: String = exec("git rev-parse --show-toplevel", dir) match {
-      case Some(x :: Nil) => x
-      case _ => throw new Exception(s"Invalid directory: $dir")
-    }
-
-    val origin: String = exec("git remote get-url origin", root) match {
-      case Some(x :: Nil) => x
-      case _ => throw new Exception("Invalid remote origin found")
-    }
-
+    val root = execT("git rev-parse --show-toplevel", dir, s"Invalid directory: $dir")(0)
+    val origin = execT("git remote get-url origin", root, "Invalid remote origin found")(0)
     new Repo(root, origin)
   }
 
@@ -48,16 +34,9 @@ object Repo {
       case Some(ghqRoot) => fromDir(s"$ghqRoot/$repoPath")
     }
   }
-
-  def peco(list: List[String]): String = {
-    val input = new ByteArrayInputStream(list.mkString("\n").getBytes("UTF-8"))
-    ((Process("cat") #< input) #| Process("peco")).lineStream.toList(0)
-  }
-
 }
 
 case class Repo(root: String, origin: String) {
-
   private val sshPattern = "git@(.*)\\:(.*)/(.*)\\.git".r
   private val httpsPattern = "https://(.*)/(.*)/(.*)".r
 
@@ -67,16 +46,13 @@ case class Repo(root: String, origin: String) {
     case _ => new Exception(s"Invalid origin: $origin")
   }
 
-  private def exec(command: String, error: String) =
-    Repo.exec(command, root).getOrThrow(new Exception(error))
-
   def branches: List[String] =
-    exec("git branch", s"git branch died. Is the repository broken?: $root")
+    execT("git branch", root, s"git branch died. Is the repository broken?: $root")
       .map(_.replaceFirst("^\\* ", ""))
       .map(_.trim)
 
   def currentBranch: String =
-    exec("git branch", s"git branch died. Is the repository broken?: $root")
+    execT("git branch", root, s"git branch died. Is the repository broken?: $root")
       .filter(_.matches("^\\* .*"))
       .headOption
       .getOrThrow(new Exception("No main branch found"))

@@ -1,7 +1,5 @@
 package io.github.fand.clonepool.lib
 import io.github.fand.clonepool.util._
-import scala.sys.process.Process
-import scala.util.control.Exception._
 import java.io.File
 
 object Pool {
@@ -16,15 +14,9 @@ object Pool {
 }
 
 case class Pool(repopath: String) {
-  private def exec(command: String, dir: String) = allCatch opt Process(command, new File(dir)).lineStream.toList
-
-  private val CLONES_PER_REPO = 4
   private val CLONEPOOL_ROOT = System.getProperty("user.home") + s"/.clonepool"
 
   val path = s"$CLONEPOOL_ROOT/$repopath"
-
-  def shouldClone: Boolean =
-    !doesPoolExist || canCloneMore
 
   def doesPoolExist: Boolean =
     new File(path).exists
@@ -32,15 +24,8 @@ case class Pool(repopath: String) {
   def hasClone(branch: String): Boolean =
     new File(s"$path/$branch").exists
 
-  def canCloneMore: Boolean =
-    new File(path).list.size < CLONES_PER_REPO
-
-  def nextIndex: Int =
-    new File(path).list.size + 1
-
-  def clones: List[String] = {
+  def clones: List[String] =
     new File(path).list.toList
-  }
 
   def createPool(): Unit =
     new File(path).mkdirs()
