@@ -23,9 +23,9 @@ object Main {
   def checkout(keywords: Seq[String]) = {
     val isInRepo = Repo.isDirInRepo(".")
 
-    keywords match {
+    val (repo, pool, branch) = keywords match {
       case reponame +: branch +: Nil => checkoutRepoBranch(reponame, branch)
-      case keyword +: Nil => if (isInRepo) {
+      case keyword +: Nil => if (isInRepo && !keyword.contains("/")) {
         checkoutBranch(keyword)
       }
       else {
@@ -33,17 +33,6 @@ object Main {
       }
       case _ => throw new Exception("Invalid keywords")
     }
-  }
-
-  def checkoutRepoBranch(reponame: String, branch: String) = {
-    val repo = Repo.fromName(reponame)
-    val pool = Pool(repo.path)
-    println(s"checkoutRepoBranch:\n  $repo\n  $pool\n  $branch")
-  }
-
-  def checkoutBranch(branch: String) = {
-    val repo = Repo.fromDir(".")
-    val pool = Pool(repo.path)
 
     if (!pool.doesPoolExist) {
       pool.createPool()
@@ -56,9 +45,22 @@ object Main {
     println(s"${pool.path}/$branch");
   }
 
+  def checkoutRepoBranch(reponame: String, branch: String) = {
+    val repo = Repo.fromName(reponame)
+    val pool = Pool(repo.path)
+    (repo, pool, branch)
+  }
+
+  def checkoutBranch(branch: String) = {
+    val repo = Repo.fromDir(".")
+    val pool = Pool(repo.path)
+    (repo, pool, branch)
+  }
+
   def checkoutRepo(reponame: String) = {
     val repo = Repo.fromName(reponame)
     val pool = Pool(repo.path)
+    (repo, pool, repo.currentBranch)
   }
 
   private def exitcode(cmd: String): Int =

@@ -15,11 +15,13 @@ object Pool {
   }
 }
 
-case class Pool(path: String) {
+case class Pool(repopath: String) {
   private def exec(command: String, dir: String) = allCatch opt Process(command, new File(dir)).lineStream.toList
 
   private val CLONES_PER_REPO = 4
   private val CLONEPOOL_ROOT = System.getProperty("user.home") + s"/.clonepool"
+
+  val path = s"$CLONEPOOL_ROOT/$repopath"
 
   def shouldClone: Boolean =
     !doesPoolExist || canCloneMore
