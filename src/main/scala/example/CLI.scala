@@ -17,7 +17,7 @@ object CLI {
     else if (args.exists(_.matches("(--version|-v)"))) {
       VersionMode
     }
-    else if (args.exists(_.matches("(--list|-l)"))) {
+    else if (args.size == 0) {
       ListMode
     }
     else {
@@ -31,17 +31,16 @@ object CLI {
     ansi"  ",
     ansi"  %underline{Usage}",
     ansi"  ",
-    ansi"    $$ clonepool [options] <keyword>",
+    ansi"    $$ clonepool [options] <keywords>",
     ansi"  ",
     ansi"  %underline{Options}",
     ansi"  ",
-    ansi"    %yellow{--list, -l}                     List all available",
     ansi"    %yellow{--help, -h}                     Show this help",
     ansi"    %yellow{--version, -v}                  Show the version of clonepool",
     ansi"  ",
     ansi"  %underline{Examples}",
     ansi"  ",
-    ansi"    %cyan{$$ clonepool}",
+    ansi"    %cyan{$$ clonepool}                    List all clones",
     ansi"    %cyan{$$ clonepool my-branch}          Checkout to %bold{my-branch} of the branch of current directory",
     ansi"    %cyan{$$ clonepool my-repo}            Clone %bold{my-repo} and checkout to the default branch",
     ansi"    %cyan{$$ clonepool my-repo my-branch}  Clone %bold{my-repo} and checkout to %bold{my-branch}",

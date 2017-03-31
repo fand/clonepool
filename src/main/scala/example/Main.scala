@@ -12,7 +12,6 @@ object Main {
       case HelpMode => CLI.help()
       case VersionMode => CLI.version()
       case ListMode => list()
-      case CheckoutMode(Nil) => CLI.help()
       case CheckoutMode(keywords) => checkout(keywords)
     }
   }
