@@ -1,0 +1,43 @@
+div.std {
+  margin: 12px auto;
+  text-align: left;
+  cursor: pointer;
+}
+
+div.std:hover {
+  cursor: -moz-zoom-in;
+  cursor: -webkit-zoom-in;
+  cursor: -o-zoom-in;
+  cursor: zoom-in;
+}
+
+div.std span {
+  color: red;
+}
+
+h1:first-child {
+  font-weight: bold;
+}
+
+.indent-0 {
+  padding-left: 0;
+}
+
+.indent-1 {
+  padding-left: 2ex;
+}
+
+.indent-2 {
+  padding-left: 4ex;
+}
+
+.indent-3 {
+  padding-left: 6ex;
+}
+
+@media not handheld and (orientation:landscape) and (max-width:640px) {
+  div.std {
+    width: 400px;
+  }
+}
+

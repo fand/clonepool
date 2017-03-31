@@ -13,4 +13,11 @@ lazy val root = (project in file(".")).settings(
   )
 )
 
+lazy val docs = project.settings(
+  name := "ClonepoolWeb",
+  libraryDependencies ++= Seq(
+    "com.github.japgolly.scalacss" %% "core" % "0.5.1"
+  )
+)
+
 publishTo := Some(Resolver.file("clonepool",  new File( "./docs/clonepool")))
