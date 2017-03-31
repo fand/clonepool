@@ -6,9 +6,9 @@ object Pool {
   private val CLONEPOOL_ROOT = System.getProperty("user.home") + s"/.clonepool"
 
   def clones = {
-    val sites = new File(CLONEPOOL_ROOT).list.toList.map(s => s"$CLONEPOOL_ROOT/$s") // .clonepool/github.com
-    val users = sites.flatMap(s => new File(s).list.toList.map(u => s"$s/$u")) // .clonepool/github.com/fand
-    val pools = users.flatMap(u => new File(u).list.toList.map(p => s"$u/$p"))
+    val sites = new File(CLONEPOOL_ROOT).list.toList
+    val users = sites.flatMap(s => new File(s"$CLONEPOOL_ROOT/$s").list.toList.map(u => s"$s/$u"))
+    val pools = users.flatMap(u => new File(s"$CLONEPOOL_ROOT/$u").list.toList.map(p => s"$u/$p"))
     pools.flatMap(p => Pool(p).clones.map(c => s"$p/$c"))
   }
 }
