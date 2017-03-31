@@ -1,101 +1,62 @@
 package io.github.fand.clonepool.lib
 import scala.reflect.ClassTag
-import scala.sys.process.Process
-import scala.util.control.Exception._
-import java.io.File
-import java.io.ByteArrayInputStream
 import io.github.fand.clonepool.util._
 
 object Repo {
-  private def exec(command: String, dir: String) = allCatch opt Process(command, new File(dir)).lineStream.toList
+  def isDirInRepo(dir: String) = exec("git rev-parse --show-toplevel", dir).isDefined
 
   def fromDir(dir: String): Repo = {
-    val root: String = exec("git rev-parse --show-toplevel", dir) match {
-      case Some(x :: Nil) => x
-      case _ => throw new Exception(s"Invalid directory: $dir")
-    }
-
-    val origin: String = exec("git remote get-url origin", root) match {
-      case Some(x :: Nil) => x
-      case _ => throw new Exception("Invalid remote origin found")
-    }
-
+    val root = execT("git rev-parse --show-toplevel", dir, s"Invalid directory: $dir")(0)
+    val origin = execT("git remote get-url origin", root, "Invalid remote origin found")(0)
     new Repo(root, origin)
   }
 
   def fromName(name: String): Repo = {
-    val repoCandidates = exec("ghq list", ".").getOrElse(Nil)
+    var repoCandidates = exec("ghq list", ".").getOrElse(Nil)
       .filter(_.matches(s".*$name.*"))
 
-    if (repoCandidates.size > 0) {
-      val repoPath = peco(repoCandidates)
-      val ghqRootOption = exec("ghq root", ".").getOrElse(Nil).headOption
-      ghqRootOption match {
-        case None => throw new Exception("ghq root is broken")
-        case Some(ghqRoot) => fromDir(s"$ghqRoot/$repoPath")
-      }
-    }
-    else {
+    if (repoCandidates.size == 0) {
       exec(s"ghq get $name", ".") match {
         case None => throw new Exception("ghq get failed")
         case _ => println(s"ghq get $name succeeded")
       }
-      val ghqRootOption = exec("ghq root", ".").getOrElse(Nil).headOption
-      ghqRootOption match {
-        case None => throw new Exception("ghq root is broken")
-        case Some(ghqRoot) => fromDir(s"$ghqRoot/$name")
-      }
+      repoCandidates = exec("ghq list", ".").getOrElse(Nil)
+        .filter(_.matches(s".*$name.*"))
+    }
+
+    val repoPath = repoCandidates.size match {
+      case 1 => repoCandidates(0)
+      case _ => peco(repoCandidates)
+    }
+    val ghqRootOption = exec("ghq root", ".").getOrElse(Nil).headOption
+    ghqRootOption match {
+      case None => throw new Exception("ghq root is broken")
+      case Some(ghqRoot) => fromDir(s"$ghqRoot/$repoPath")
     }
   }
-
-  def peco(list: List[String]): String = {
-    val input = new ByteArrayInputStream(list.mkString("\n").getBytes("UTF-8"))
-    ((Process("cat") #< input) #| Process("peco")).lineStream.toList(0)
-  }
-
 }
 
 case class Repo(root: String, origin: String) {
+  private val sshPattern = "git@(.*)\\:(.*)/(.*)\\.git".r
+  private val httpsPattern = "https://(.*)/(.*)/(.*)".r
 
-  private def exec(command: String, error: String) =
-    Repo.exec(command, root).getOrThrow(new Exception(error))
+  val (site, user, project) = origin match {
+    case sshPattern(site, user, project) => (site, user, project)
+    case httpsPattern(site, user, project) => (site, user, project)
+    case _ => new Exception(s"Invalid origin: $origin")
+  }
 
   def branches: List[String] =
-    exec("git branch", s"git branch died. Is the repository broken?: $root")
+    execT("git branch", root, s"git branch died. Is the repository broken?: $root")
       .map(_.replaceFirst("^\\* ", ""))
       .map(_.trim)
 
   def currentBranch: String =
-    exec("git branch", s"git branch died. Is the repository broken?: $root")
+    execT("git branch", root, s"git branch died. Is the repository broken?: $root")
       .filter(_.matches("^\\* .*"))
       .headOption
       .getOrThrow(new Exception("No main branch found"))
       .replaceFirst("^\\* ", "")
 
-  // val CLONES_PER_REPO = 4
-  // val CLONEPOOL_ROOT = System.getProperty("user.home") + s"/.clonepool/"
-  //
-  // type Repo = String
-  // type Uri = String
-  //
-  // def shouldClone: Boolean =
-  //   !doesPoolExist || canCloneMore
-  //
-  // def doesPoolExist: Boolean = {
-  //   new File(cloneDst).exists
-  // }
-  //
-  // def canCloneMore: Boolean = {
-  //   new File(cloneDst).list.size < CLONES_PER_REPO
-  // }
-  //
-  // def poolPath: String =
-  //   s"$CLONEPOOL_ROOT/$site/$repo/"
-  //
-  // def clonePath: String =
-  //   s"$poolPath/$nextIndex"
-  //
-  // def nextIndex: Int =
-  //   new File(cloneDst).list.size + 1
-
+  def path = s"$site/$user/$project"
 }

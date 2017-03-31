@@ -12,27 +12,56 @@ object Main {
       case HelpMode => CLI.help()
       case VersionMode => CLI.version()
       case ListMode => list()
-      case CheckoutMode(keywords) => { checkout(keywords) }
+      case CheckoutMode(Nil) => CLI.help()
+      case CheckoutMode(keywords) => checkout(keywords)
     }
   }
 
-  def list() = {
-    val repo = Repo.fromDir(".")
-    println(repo.branches)
-  }
+  def list() =
+    Pool.clones.foreach(println)
 
   def checkout(keywords: Seq[String]) = {
-    println("gonna checkout")
-    println(keywords)
+    val isInRepo = Repo.isDirInRepo(".")
+
+    val (repo, pool, branch) = keywords match {
+      case reponame +: branch +: Nil => checkoutRepoBranch(reponame, branch)
+      case keyword +: Nil => if (isInRepo && !keyword.contains("/")) {
+        checkoutBranch(keyword)
+      }
+      else {
+        checkoutRepo(keyword)
+      }
+      case _ => throw new Exception("Invalid keywords")
+    }
+
+    if (!pool.doesPoolExist) {
+      pool.createPool()
+    }
+
+    if (!pool.hasClone(branch)) {
+      pool.createClone(repo.root, branch)
+    }
+
+    println(s"${pool.path}/$branch");
   }
 
-  // val repo = Repo.fromDir(".")
-  // // val repo = Repo.fromName("fand")
-  // println(repo.branches)
-  // println(repo.currentBranch)
+  def checkoutRepoBranch(reponame: String, branch: String) = {
+    val repo = Repo.fromName(reponame)
+    val pool = Pool(repo.path)
+    (repo, pool, branch)
+  }
 
-  // git.showBranches()
-  // println(git.remoteOrigin)
+  def checkoutBranch(branch: String) = {
+    val repo = Repo.fromDir(".")
+    val pool = Pool(repo.path)
+    (repo, pool, branch)
+  }
+
+  def checkoutRepo(reponame: String) = {
+    val repo = Repo.fromName(reponame)
+    val pool = Pool(repo.path)
+    (repo, pool, repo.currentBranch)
+  }
 
   private def exitcode(cmd: String): Int =
     Process(cmd) ! ProcessLogger(str => ())
