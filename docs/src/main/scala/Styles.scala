@@ -8,8 +8,7 @@ object Styles extends StyleSheet.Inline {
     position.absolute,
     minHeight(100%%),
     width(100%%),
-    backgroundColor(c"#EFF"),
-    color(c"#567")
+    color(c"#EFF")
   )
 
   val code = style(
@@ -17,4 +16,34 @@ object Styles extends StyleSheet.Inline {
     backgroundColor(c"#567"),
     color(c"#EFF")
   )
+
+  val background = Map(
+    "background" -> style(
+      position.absolute,
+      top(0.px),
+      left(0.px),
+      width(100%%),
+      height(100%%),
+      backgroundColor(c"#069"),
+      zIndex(-3)
+    ),
+    "mask" -> style(
+      position.fixed,
+      top(0.px),
+      left(0.px),
+      width(100%%),
+      height(100%%),
+      backgroundColor(rgba(0, 0, 0, 0.1)),
+      zIndex(-1)
+    )
+  )
+
+  val cloneImage = styleF.int(0 to 100)(i => styleS(
+    position.absolute,
+    top((Math.random * 80 + 10).%%),
+    left((Math.random * 80 + 10).%%),
+    // transform(s"rotate(${Math.random * 360})")
+    zIndex(-1),
+    opacity(0.6)
+  ))
 }

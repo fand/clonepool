@@ -43,12 +43,25 @@ $ clonepool my-repo my-branch
     )
   )
 
+  val background = ScalaComponent.static("Background")(
+    <.div(
+      <.div(Styles.background("background")),
+      <.div(Styles.background("mask")),
+      (1 to 30).toVdomArray(i => <.img(
+        Styles.cloneImage(i),
+        ^.src := "./images/clone.png",
+        ^.className := s"Clone-$i"
+      ))
+    )
+  )
+
   val App = ScalaComponent.static("App")(
     <.div(
-      Styles.app,
       header(),
       install(),
-      usage()
+      usage(),
+      background(),
+      Styles.app
     )
   )
 
