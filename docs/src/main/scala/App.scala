@@ -48,12 +48,12 @@ $ clonepool my-repo my-branch
     <.div(
       <.div(Styles.background("background")),
       <.div(Styles.background("mask")),
-      (1 to 30).toVdomArray(i => <.img(
+      (1 to 100).toVdomArray(i => <.img(
         Styles.cloneImage(i),
         ^.src := "./images/clone.png",
         ^.className := s"Clone-$i",
         ^.style := js.Dynamic.literal(
-          "transform" -> s"rotate(${Math.random * Math.random * 60 - 30}deg)"
+          "transform" -> s"rotate(${Math.random * 40 - 20}deg)"
         )
       ))
     )
