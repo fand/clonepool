@@ -42,8 +42,7 @@ object Styles extends StyleSheet.Inline {
     position.absolute,
     top((Math.random * 80 + 10).%%),
     left((Math.random * 80 + 10).%%),
-    // transform(s"rotate(${Math.random * 360})")
     zIndex(-1),
-    opacity(0.6)
+    opacity(0.3)
   ))
 }

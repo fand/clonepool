@@ -5,6 +5,7 @@ import japgolly.scalajs.react._, vdom.html_<^._
 import scalacss.Defaults._
 import scalacss.ScalaCssReact._
 import scalacss._
+import scala.scalajs.js
 
 object MyApp extends JSApp {
   val Snippet = ScalaComponent.builder[String]("Snippet")
@@ -50,7 +51,10 @@ $ clonepool my-repo my-branch
       (1 to 30).toVdomArray(i => <.img(
         Styles.cloneImage(i),
         ^.src := "./images/clone.png",
-        ^.className := s"Clone-$i"
+        ^.className := s"Clone-$i",
+        ^.style := js.Dynamic.literal(
+          "transform" -> s"rotate(${Math.random * Math.random * 60 - 30}deg)"
+        )
       ))
     )
   )
