@@ -1,32 +1,29 @@
-package io.github.fand.clonepool.docs
-import scalacss.Defaults._
+package io.github.fand.clonepool.docs.components
+import japgolly.scalajs.react._, vdom.html_<^._
 import scala.concurrent.duration._
+import scala.scalajs.js
+import scalacss.Defaults._
+import scalacss.ScalaCssReact._
 
-object Styles extends StyleSheet.Inline {
+object Background {
+  val component = ScalaComponent.static("Background")(
+    <.div(
+      BackgroundStyle.background("background"),
+      <.div(BackgroundStyle.background("mask")),
+      (1 to 100).toVdomArray(i => <.img(
+        BackgroundStyle.cloneImage(i),
+        ^.src := "./images/clone.png",
+        ^.className := s"Clone-$i",
+        ^.style := js.Dynamic.literal(
+          "transform" -> s"rotate(${Math.random * 40 - 20}deg)"
+        )
+      ))
+    )
+  )
+}
+
+object BackgroundStyle extends StyleSheet.Inline {
   import dsl._
-
-  val app = style(
-    position.absolute,
-    minHeight(100%%),
-    width(100%%),
-    color(c"#EFF")
-  )
-
-  val container = style(
-    margin(0 px, auto),
-    padding(0 px, 10 px),
-    width(100%%),
-    maxWidth(960 px)
-  )
-
-  val code = style(
-    display.block,
-    padding(10 px),
-    backgroundColor(rgba(0, 0, 30, 0.4)),
-    color(c"#EFF"),
-    lineHeight(1.6 em)
-  )
-
   val background = Map(
     "background" -> style(
       position.absolute,
