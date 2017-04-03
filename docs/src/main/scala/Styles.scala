@@ -12,8 +12,16 @@ object Styles extends StyleSheet.Inline {
     color(c"#EFF")
   )
 
+  val container = style(
+    margin(0 px, auto),
+    padding(0 px, 10 px),
+    width(100%%),
+    maxWidth(960 px)
+  )
+
   val code = style(
     display.block,
+    padding(10 px),
     backgroundColor(rgba(0, 0, 30, 0.4)),
     color(c"#EFF")
   )
@@ -26,7 +34,8 @@ object Styles extends StyleSheet.Inline {
       width(100%%),
       height(100%%),
       backgroundColor(c"#069"),
-      zIndex(-3)
+      zIndex(-3),
+      overflow.hidden
     ),
     "mask" -> style(
       position.fixed,

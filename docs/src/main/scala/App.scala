@@ -8,6 +8,16 @@ import scalacss._
 import scala.scalajs.js
 
 object MyApp extends JSApp {
+  def dedent(str: String) = {
+    val lines = str.split("\n").tail.init
+    val indent = "^(\\s*).*$".r
+    val level = lines.map(line => line match {
+      case indent(s) => s.length
+      case _ => 0
+    }).min
+    lines.map(_.substring(level)).mkString("\n")
+  }
+
   val Snippet = ScalaComponent.builder[String]("Snippet")
     .render_P(snippet =>
       <.pre(
@@ -35,18 +45,36 @@ object MyApp extends JSApp {
   val usage = ScalaComponent.static("Usage")(
     <.section(
       <.h1("Usage"),
-      Snippet("""
-$ clonepool
-$ clonepool my-branch
-$ clonepool my-repo
-$ clonepool my-repo my-branch
-      """.trim())
+      Snippet(dedent("""
+        $ clonepool
+        $ clonepool my-branch
+        $ clonepool my-repo
+        $ clonepool my-repo my-branch
+      """))
+    )
+  )
+
+  val shell = ScalaComponent.static("Shell")(
+    <.section(
+      <.h1("Clone in the Shell"),
+      <.p(dedent("""
+        Add following scripts to your ~/.bashrc
+      """)),
+      Snippet(dedent("""
+        function go_clone() {
+            if [[ $1 == '' ]]; then
+                cd $(clonepool | peco)
+            else
+                cd $(clonepool $1)
+            fi
+        }
+      """))
     )
   )
 
   val background = ScalaComponent.static("Background")(
     <.div(
-      <.div(Styles.background("background")),
+      Styles.background("background"),
       <.div(Styles.background("mask")),
       (1 to 100).toVdomArray(i => <.img(
         Styles.cloneImage(i),
@@ -61,11 +89,15 @@ $ clonepool my-repo my-branch
 
   val App = ScalaComponent.static("App")(
     <.div(
-      header(),
-      install(),
-      usage(),
-      background(),
-      Styles.app
+      Styles.app,
+      <.div(
+        header(),
+        install(),
+        usage(),
+        shell(),
+        background(),
+        Styles.container
+      )
     )
   )
 
