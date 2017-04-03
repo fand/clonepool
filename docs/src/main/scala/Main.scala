@@ -6,6 +6,7 @@ import scalacss.Defaults._
 
 object Main extends JSApp {
   override def main(): Unit = {
+    HeaderStyle.addToDocument()
     BackgroundStyle.addToDocument()
     SnippetStyle.addToDocument()
     AppStyle.addToDocument()
