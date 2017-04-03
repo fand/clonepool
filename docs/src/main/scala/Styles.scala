@@ -34,7 +34,7 @@ object Styles extends StyleSheet.Inline {
       left(0.px),
       width(100%%),
       height(100%%),
-      backgroundColor(c"#069"),
+      backgroundImage := "radial-gradient(farthest-side circle at center -600px, #9EF, #035)",
       zIndex(-3),
       overflow.hidden
     ),
