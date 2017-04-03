@@ -23,7 +23,8 @@ object Styles extends StyleSheet.Inline {
     display.block,
     padding(10 px),
     backgroundColor(rgba(0, 0, 30, 0.4)),
-    color(c"#EFF")
+    color(c"#EFF"),
+    lineHeight(1.6 em)
   )
 
   val background = Map(

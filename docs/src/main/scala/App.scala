@@ -23,7 +23,10 @@ object MyApp extends JSApp {
       <.pre(
         <.code(
           snippet,
-          Styles.code
+          Styles.code,
+          ^.style := js.Dynamic.literal(
+            "font-family" ->  "'Source Code Pro', monospace"
+          )
         )
       )
     )
@@ -46,10 +49,10 @@ object MyApp extends JSApp {
     <.section(
       <.h1("Usage"),
       Snippet(dedent("""
-        $ clonepool
-        $ clonepool my-branch
-        $ clonepool my-repo
-        $ clonepool my-repo my-branch
+        $ clonepool                    # List all clones
+        $ clonepool my-branch          # Checkout to my-branch of the branch of current directory
+        $ clonepool my-repo            # Clone my-repo and checkout to the default branch
+        $ clonepool my-repo my-branch  # Clone my-repo and checkout to my-branch
       """))
     )
   )
