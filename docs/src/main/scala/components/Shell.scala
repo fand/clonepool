@@ -9,10 +9,14 @@ import scalacss.ScalaCssReact._
 object Shell {
   val component = ScalaComponent.static("Shell")(
     <.section(
-      <.h2("Clone in the Shell"),
-      <.p(dedent("""
-        Add following scripts to your ~/.bashrc
-      """)),
+      <.h2("Use with peco"),
+      <.p(
+        "Clonepool works well with !",
+        Link.component("peco", "https://github.com/peco/peco"),
+        "!",
+        <.br,
+        "Add these lines to your `~/.bashrc` (or `~/.zshrc`, etc)."
+      ),
       Snippet.component(dedent("""
         function go_clone() {
             if [[ $1 == '' ]]; then

@@ -8,10 +8,9 @@ object Footer {
     <.footer(
       FooterStyle.footer,
       <.span("Written by ",
-        <.a(
-          FooterStyle.link,
-          ^.href := "https://twitter.com/amagitakayosi/",
-          "@amagitakayosi"
+        Link.component(
+          "@amagitakayosi",
+          "https://twitter.com/amagitakayosi/"
         )
       )
     )
@@ -24,9 +23,5 @@ object FooterStyle extends StyleSheet.Inline {
   val footer = style(
     textAlign.center,
     padding(40 px, 0 px, 60 px)
-  )
-
-  val link = style(
-    color(c"#EFF")
   )
 }

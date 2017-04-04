@@ -11,6 +11,7 @@ object Main extends JSApp {
     SnippetStyle.addToDocument()
     AppStyle.addToDocument()
     FooterStyle.addToDocument()
+    LinkStyle.addToDocument()
 
     App.component().renderIntoDOM(document.body)
   }

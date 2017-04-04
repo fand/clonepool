@@ -37,6 +37,7 @@ $ cp -r $(ghq root)/github.com/playframework/playframework ~/.clonepool/github.c
 $ echo ~/.clonepool/github.com/playframework/playframework/my-branch
 ```
 
+Clonepool clones the repository using [ghq](https://github.com/motemen/ghq).  
 So you can develop in any branches without affecting class caches!
 
 If you are already in a Git repository, you can omit the repository name:
@@ -54,7 +55,7 @@ $ rm $(clonepool playframework/playframework my-branch)
 
 ## Use With peco
 
-Clonepool works well with peco!  
+Clonepool works well with [peco](https://github.com/peco/peco)!  
 Add these lines to your `~/.bashrc` (or `~/.zshrc`, etc).
 
 ```sh
