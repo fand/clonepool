@@ -8,7 +8,13 @@ object Header {
     <.header(
       HeaderStyle.header,
       <.img(^.src := "images/logo.png", HeaderStyle.logo),
-      <.h1("CLONEPOOL")
+      <.h1("CLONEPOOL"),
+      <.a(
+        ^.href := "https://github.com/fand/clonepool",
+        <.img(
+          ^.src := "https://img.shields.io/github/stars/fand/clonepool.svg?style=social&label=Star"
+        )
+      )
     )
   )
 }

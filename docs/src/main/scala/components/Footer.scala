@@ -7,16 +7,11 @@ object Footer {
   val component = ScalaComponent.static("Footer")(
     <.footer(
       FooterStyle.footer,
-      <.span("GitHub : ",
+      <.span("Written by ",
         <.a(
-          ^.href := "https://github.com/fand/clonepool/",
-          "https://github.com/fand/clonepool/"
-        )
-      ),
-      <.span("Twitter : ",
-        <.a(
+          FooterStyle.link,
           ^.href := "https://twitter.com/amagitakayosi/",
-          "https://twitter.com/amagitakayosi/"
+          "@amagitakayosi"
         )
       )
     )
@@ -28,6 +23,10 @@ object FooterStyle extends StyleSheet.Inline {
 
   val footer = style(
     textAlign.center,
-    padding(20 px)
+    padding(40 px, 0 px, 60 px)
+  )
+
+  val link = style(
+    color(c"#EFF")
   )
 }
