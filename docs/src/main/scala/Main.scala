@@ -13,6 +13,6 @@ object Main extends JSApp {
     FooterStyle.addToDocument()
     LinkStyle.addToDocument()
 
-    App.component().renderIntoDOM(document.body)
+    App.component().renderIntoDOM(document.querySelector("#app"))
   }
 }
