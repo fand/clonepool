@@ -23,7 +23,6 @@ object HeaderStyle extends StyleSheet.Inline {
   val logo = style(
     display.block,
     margin(0 px, auto),
-    width(320 px),
-    filter := "invert()"
+    width(320 px)
   )
 }
