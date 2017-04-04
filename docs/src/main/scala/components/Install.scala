@@ -9,7 +9,7 @@ import scalacss.ScalaCssReact._
 object Install {
   val component = ScalaComponent.static("Install")(
     <.section(
-      <.h1("Install"),
+      <.h2("Install"),
       Snippet.component("$ brew install clonepool")
     )
   )

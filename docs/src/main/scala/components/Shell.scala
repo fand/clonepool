@@ -9,7 +9,7 @@ import scalacss.ScalaCssReact._
 object Shell {
   val component = ScalaComponent.static("Shell")(
     <.section(
-      <.h1("Clone in the Shell"),
+      <.h2("Clone in the Shell"),
       <.p(dedent("""
         Add following scripts to your ~/.bashrc
       """)),

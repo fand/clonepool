@@ -9,7 +9,7 @@ import scalacss.ScalaCssReact._
 object Usage {
   val component = ScalaComponent.static("Usage")(
     <.section(
-      <.h1("Usage"),
+      <.h2("Usage"),
       Snippet.component(dedent("""
         $ clonepool                    # List all clones
         $ clonepool my-branch          # Checkout to my-branch of the branch of current directory
