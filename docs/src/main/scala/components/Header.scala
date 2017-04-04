@@ -22,7 +22,8 @@ object HeaderStyle extends StyleSheet.Inline {
 
   val logo = style(
     display.block,
-    margin(0 px, auto),
-    width(320 px)
+    margin(20 px, auto),
+    width(320 px),
+    maxWidth(40%%)
   )
 }
