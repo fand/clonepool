@@ -16,6 +16,7 @@ object App {
         Usage.component(),
         Shell.component(),
         Background.component(),
+        Footer.component(),
         AppStyle.container
       )
     )

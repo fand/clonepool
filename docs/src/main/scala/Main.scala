@@ -10,6 +10,7 @@ object Main extends JSApp {
     BackgroundStyle.addToDocument()
     SnippetStyle.addToDocument()
     AppStyle.addToDocument()
+    FooterStyle.addToDocument()
 
     App.component().renderIntoDOM(document.body)
   }
