@@ -28,6 +28,7 @@ object SnippetStyle extends StyleSheet.Inline {
     padding(10 px),
     backgroundColor(rgba(0, 0, 30, 0.4)),
     color(c"#EFF"),
-    lineHeight(1.6 em)
+    lineHeight(1.6 em),
+    overflow.scroll
   )
 }
