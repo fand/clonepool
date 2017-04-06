@@ -10,6 +10,7 @@ object Header {
       <.img(^.src := "images/logo.png", HeaderStyle.logo),
       <.h1("CLONEPOOL"),
       <.a(
+        HeaderStyle.button,
         ^.href := "https://github.com/fand/clonepool",
         <.img(
           ^.src := "https://img.shields.io/github/stars/fand/clonepool.svg?style=social&label=Star"
@@ -17,7 +18,7 @@ object Header {
       ),
       <.p(
         HeaderStyle.description,
-        "Clonepool is a CLI utility to manage copies of git repositories",
+        "Clonepool is a CLI utility to manage copies of git repositories.",
         <.br,
         "Created to reduce compilation times on Scala project."
       )
@@ -39,7 +40,13 @@ object HeaderStyle extends StyleSheet.Inline {
     maxWidth(40%%)
   )
 
+  val button = style(
+    display.inlineBlock,
+    width(74 px),
+    height(20 px)
+  )
+
   val description = style(
-    margin(10 px, 0 px)
+    margin(30 px, 0 px)
   )
 }

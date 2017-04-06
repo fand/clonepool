@@ -11,7 +11,7 @@ object Shell {
     <.section(
       <.h2("Use with peco"),
       <.p(
-        "Clonepool works well with !",
+        "Clonepool works well with ",
         Link.component("peco", "https://github.com/peco/peco"),
         "!",
         <.br,
