@@ -43,7 +43,8 @@ object HeaderStyle extends StyleSheet.Inline {
   val button = style(
     display.inlineBlock,
     width(74 px),
-    height(20 px)
+    height(20 px),
+    pointerEvents := "auto"
   )
 
   val description = style(

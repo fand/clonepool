@@ -18,6 +18,7 @@ object Link {
 object LinkStyle extends StyleSheet.Inline {
   import dsl._
   val link = style(
-    color(c"#EFF")
+    color(c"#EFF"),
+    pointerEvents := "auto"
   )
 }

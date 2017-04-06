@@ -5,18 +5,30 @@ import scala.scalajs.js
 import scalacss.Defaults._
 import scalacss.ScalaCssReact._
 
+case class CloneState(count: Int = 0) {}
+
+class CloneBackend($: BackendScope[Int, CloneState]) {
+  def activate(): Callback =
+    $.modState(s => s.copy(
+      count = s.count + (if (Math.random > 0.5) 1 else -1)
+    ))
+
+  def render(i: Int, state: CloneState): VdomElement =
+    <.img(
+      CloneStyle.cloneImage(i),
+      ^.src := "./images/clone.png",
+      ^.className := s"Clone-$i",
+      ^.style := js.Dynamic.literal(
+        "transform" -> s"rotate(${Math.random * 40 - 20 + state.count * 360}deg)"
+      ),
+      ^.onClick --> activate()
+    )
+}
+
 object Clone {
   def component = ScalaComponent.builder[Int]("Clone")
-    .render_P(i =>
-      <.img(
-        CloneStyle.cloneImage(i),
-        ^.src := "./images/clone.png",
-        ^.className := s"Clone-$i",
-        ^.style := js.Dynamic.literal(
-          "transform" -> s"rotate(${Math.random * 40 - 20}deg)"
-        )
-      )
-    )
+    .initialState(new CloneState())
+    .renderBackend[CloneBackend]
     .build
 }
 
@@ -57,7 +69,7 @@ object CloneStyle extends StyleSheet.Inline {
     animationDelay(Math.random * -60 seconds),
     animationIterationCount.infinite,
     animationTimingFunction.linear,
-    zIndex(-1),
-    opacity(Math.random * 0.2)
+    opacity(Math.random * 0.2),
+    transition := "0.3s"
   ))
 }

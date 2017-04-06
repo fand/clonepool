@@ -15,10 +15,10 @@ object App {
         Install.component(),
         Usage.component(),
         Shell.component(),
-        Background.component(),
         Footer.component(),
         AppStyle.container
-      )
+      ),
+      Background.component()
     )
   )
 }
@@ -34,9 +34,12 @@ object AppStyle extends StyleSheet.Inline {
   )
 
   val container = style(
+    position.relative,
     margin(0 px, auto),
     padding(0 px, 10 px),
     width(100%%),
-    maxWidth(960 px)
+    maxWidth(960 px),
+    zIndex(3),
+    pointerEvents := "none"
   )
 }
