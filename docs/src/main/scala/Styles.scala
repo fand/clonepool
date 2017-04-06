@@ -25,5 +25,6 @@ object Styles extends StyleSheet.Standalone {
     AppStyle.addToDocument()
     FooterStyle.addToDocument()
     LinkStyle.addToDocument()
+    CloneStyle.addToDocument()
   }
 }
