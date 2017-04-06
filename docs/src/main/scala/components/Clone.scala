@@ -14,7 +14,8 @@ object Clone {
         ^.className := s"Clone-$i",
         ^.style := js.Dynamic.literal(
           "transform" -> s"rotate(${Math.random * 40 - 20}deg)"
-        )
+        ),
+        ^.onClick --> Callback { println(s"hello, $i") }
       )
     )
     .build
@@ -57,7 +58,6 @@ object CloneStyle extends StyleSheet.Inline {
     animationDelay(Math.random * -60 seconds),
     animationIterationCount.infinite,
     animationTimingFunction.linear,
-    zIndex(-1),
     opacity(Math.random * 0.2)
   ))
 }

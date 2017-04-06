@@ -27,7 +27,6 @@ object BackgroundStyle extends StyleSheet.Inline {
       width(100%%),
       height(100%%),
       backgroundImage := "radial-gradient(farthest-side circle at center -400px, #5AF, #0DC 20%, #067 60%, #035)",
-      zIndex(-3),
       overflow.hidden
     ),
     "mask" -> style(
@@ -37,7 +36,8 @@ object BackgroundStyle extends StyleSheet.Inline {
       width(100%%),
       height(100%%),
       backgroundColor(rgba(0, 0, 0, 0.1)),
-      zIndex(-1)
+      zIndex(2),
+      pointerEvents := "none"
     )
   )
 }

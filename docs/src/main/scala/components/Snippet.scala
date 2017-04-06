@@ -29,6 +29,7 @@ object SnippetStyle extends StyleSheet.Inline {
     backgroundColor(rgba(0, 0, 30, 0.4)),
     color(c"#EFF"),
     lineHeight(1.6 em),
-    overflow.scroll
+    overflow.scroll,
+    pointerEvents := "auto"
   )
 }
