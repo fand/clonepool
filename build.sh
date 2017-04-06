@@ -11,7 +11,7 @@ TAR="$DIR.tar.gz"
 
 sbt assembly
 mkdir $DIR
-mv target/scala-2.12/Clonepool-assembly-$VERSION.jar $DIR/clonepool.jar
+mv target/scala-2.11/Clonepool-assembly-$VERSION.jar $DIR/clonepool.jar
 tar zcvf $TAR $DIR
 rm -f docs/bin/*
 mv $TAR docs/bin
