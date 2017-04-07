@@ -10,7 +10,10 @@ object Install {
   val component = ScalaComponent.static("Install")(
     <.section(
       <.h2("Install"),
-      Snippet.component("$ brew install clonepool")
+      Snippet.component(dedent("""
+        $ brew tap fand/clonepool
+        $ brew install clonepool
+      """))
     )
   )
 }
