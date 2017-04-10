@@ -13,7 +13,7 @@ object Snippet {
           snippet,
           SnippetStyle.code,
           ^.style := js.Dynamic.literal(
-            "font-family" ->  "'Source Code Pro', monospace"
+            "fontFamily" ->  "'Source Code Pro', monospace"
           )
         )
       )
